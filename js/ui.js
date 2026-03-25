@@ -16,7 +16,7 @@ const UI = {
     // 現在時刻に最も近い次の便を見つける
     let closestTrip = null;
     let closestDiff = Infinity;
-    const allTrips = [...tripsByDir.kawatsu, ...tripsByDir.noi];
+    const allTrips = (tripsByDir.groups || []).flatMap(g => g.trips);
     for (const t of allTrips) {
       const [h, m] = t.first_time.split(':').map(Number);
       const tripMin = h * 60 + m;
@@ -27,23 +27,13 @@ const UI = {
       }
     }
 
-    // 川津方面
-    if (tripsByDir.kawatsu.length > 0) {
+    // 方面別にグループ表示
+    for (const g of (tripsByDir.groups || [])) {
+      if (g.trips.length === 0) continue;
       const group = document.createElement('div');
       group.className = 'direction-group';
-      group.innerHTML = '<div class="direction-title">── 川津方面行 ──</div>';
-      for (const trip of tripsByDir.kawatsu) {
-        group.appendChild(this.createTripButton(trip, closestTrip, onSelect));
-      }
-      container.appendChild(group);
-    }
-
-    // 野井・沖泊方面
-    if (tripsByDir.noi.length > 0) {
-      const group = document.createElement('div');
-      group.className = 'direction-group';
-      group.innerHTML = '<div class="direction-title">── 野井・沖泊方面行 ──</div>';
-      for (const trip of tripsByDir.noi) {
+      group.innerHTML = `<div class="direction-title">── ${g.name}行 ──</div>`;
+      for (const trip of g.trips) {
         group.appendChild(this.createTripButton(trip, closestTrip, onSelect));
       }
       container.appendChild(group);

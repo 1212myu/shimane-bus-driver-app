@@ -59,15 +59,24 @@ const GTFS = {
   // 方面別にグループ化
   getTripsByDirection(date) {
     const trips = this.getTripsForDate(date);
-    const kawatsu = trips.filter(t => t.direction === '川津方面');
-    const noi = trips.filter(t => t.direction === '野井・沖泊方面');
+    // 方面名はデータから動的に取得
+    const directions = [...new Set(trips.map(t => t.direction))].sort();
+    const group1 = trips.filter(t => t.direction === directions[0]);
+    const group2 = trips.filter(t => t.direction === directions[1] || false);
 
-    // 発車時刻順にソート
     const sortByTime = (a, b) => a.first_time.localeCompare(b.first_time);
-    kawatsu.sort(sortByTime);
-    noi.sort(sortByTime);
+    group1.sort(sortByTime);
+    group2.sort(sortByTime);
 
-    return { kawatsu, noi };
+    return {
+      groups: [
+        { name: directions[0], trips: group1 },
+        ...(directions[1] ? [{ name: directions[1], trips: group2 }] : [])
+      ],
+      // 後方互換
+      kawatsu: group1,
+      noi: group2
+    };
   },
 
   formatDate(date) {
