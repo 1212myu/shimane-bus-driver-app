@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3)",
+      "Bash(python3 -c \":*)",
+      "Bash(brew install:*)",
+      "Bash(gh auth:*)",
+      "Bash(gh repo:*)",
+      "Bash(gh api:*)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f''''URL: {d[\"\"html_url\"\"]}''''\\); print\\(f''''Source: {d[\"\"source\"\"][\"\"branch\"\"]}''''\\)\")"
+    ]
+  }
+}
