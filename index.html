@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1a1a2e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>島根コミュニティバス 運行支援</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 便選択画面 -->
+  <div id="screen-select" class="screen active">
+    <header class="header">
+      <h1>島根コミュニティバス</h1>
+      <p class="subtitle">運行支援システム</p>
+    </header>
+    <div class="date-info">
+      <p id="today-date"></p>
+      <p id="service-type"></p>
+    </div>
+    <div id="suspension-notice" class="notice hidden">
+      <p>本日は全便運休です</p>
+    </div>
+    <div id="trip-list"></div>
+  </div>
+
+  <!-- 運行支援画面 -->
+  <div id="screen-driving" class="screen">
+    <header class="header-driving">
+      <span id="route-info"></span>
+      <button id="btn-back" class="btn-back">← 便選択</button>
+    </header>
+
+    <div id="clock-container">
+      <div id="clock"></div>
+    </div>
+
+    <div id="next-stop-container">
+      <div class="next-label">▶ 次</div>
+      <div id="next-stop-name"></div>
+      <div id="next-stop-time"></div>
+      <div id="next-stop-distance"></div>
+    </div>
+
+    <div id="upcoming-stops"></div>
+
+    <div id="passed-section">
+      <div class="section-label">── 通過済み ──</div>
+      <div id="passed-stops"></div>
+    </div>
+
+    <!-- 早発アラート -->
+    <div id="early-alert" class="hidden">
+      <div class="alert-content">
+        <p class="alert-title">早発注意！</p>
+        <p id="alert-message"></p>
+      </div>
+    </div>
+
+    <!-- 運行完了 -->
+    <div id="trip-complete" class="hidden">
+      <div class="complete-content">
+        <p class="complete-title">運行完了</p>
+        <p id="complete-message"></p>
+        <button id="btn-complete-back" class="btn-large">便選択に戻る</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/gtfs.js"></script>
+  <script src="js/gps.js"></script>
+  <script src="js/matching.js"></script>
+  <script src="js/alert.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

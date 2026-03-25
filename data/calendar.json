@@ -1,0 +1,30 @@
+{
+  "services": {
+    "平日": { "monday": true, "tuesday": true, "wednesday": true, "thursday": true, "friday": true, "saturday": false, "sunday": false },
+    "土日祝": { "monday": false, "tuesday": false, "wednesday": false, "thursday": false, "friday": false, "saturday": true, "sunday": true }
+  },
+  "exceptions": {
+    "20260429": { "平日": "remove", "土日祝": "add" },
+    "20260505": { "平日": "remove", "土日祝": "add" },
+    "20260506": { "平日": "remove", "土日祝": "add" },
+    "20260721": { "平日": "remove", "土日祝": "add" },
+    "20260811": { "平日": "remove", "土日祝": "add" },
+    "20260915": { "平日": "remove", "土日祝": "add" },
+    "20260923": { "平日": "remove", "土日祝": "add" },
+    "20261013": { "平日": "remove", "土日祝": "add" },
+    "20261103": { "平日": "remove", "土日祝": "add" },
+    "20261123": { "平日": "remove", "土日祝": "add" },
+    "20261230": { "平日": "remove", "土日祝": "add" },
+    "20261231": { "平日": "remove", "土日祝": "add" },
+    "20270101": { "全便運休": true },
+    "20270102": { "全便運休": true },
+    "20270103": { "全便運休": true },
+    "20270112": { "平日": "remove", "土日祝": "add" },
+    "20270211": { "平日": "remove", "土日祝": "add" },
+    "20270223": { "平日": "remove", "土日祝": "add" },
+    "20270320": { "平日": "remove", "土日祝": "add" },
+    "20270429": { "平日": "remove", "土日祝": "add" }
+  },
+  "valid_from": "20260401",
+  "valid_to": "20270430"
+}
