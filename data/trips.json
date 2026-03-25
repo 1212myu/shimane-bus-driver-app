@@ -3876,270 +3876,270 @@
     ]
   },
   {
-    "trip_id": "平日_noi_0930",
+    "trip_id": "平日_noi_0940",
     "service_id": "平日",
     "direction": "野井方面",
     "headsign": "JF野井出張所前",
     "first_stop": "大芦別所入口",
-    "first_time": "09:30",
+    "first_time": "09:40",
     "stop_times": [
       {
         "stop_id": "140_01",
         "name": "大芦別所入口",
-        "arrival": "09:30",
-        "departure": "09:30",
+        "arrival": "09:40",
+        "departure": "09:40",
         "sequence": 1
       },
       {
         "stop_id": "139_01",
         "name": "大芦別所",
-        "arrival": "09:31",
-        "departure": "09:31",
+        "arrival": "09:41",
+        "departure": "09:41",
         "sequence": 2
       },
       {
         "stop_id": "138_01",
         "name": "山陰家庭学院前",
-        "arrival": "09:32",
-        "departure": "09:32",
+        "arrival": "09:42",
+        "departure": "09:42",
         "sequence": 3
       },
       {
         "stop_id": "137_01",
         "name": "海鳥上",
-        "arrival": "09:36",
-        "departure": "09:36",
+        "arrival": "09:46",
+        "departure": "09:46",
         "sequence": 4
       },
       {
         "stop_id": "136_01",
         "name": "海鳥",
-        "arrival": "09:36",
-        "departure": "09:36",
+        "arrival": "09:46",
+        "departure": "09:46",
         "sequence": 5
       },
       {
         "stop_id": "134_01",
         "name": "楡木",
-        "arrival": "09:39",
-        "departure": "09:39",
+        "arrival": "09:49",
+        "departure": "09:49",
         "sequence": 6
       },
       {
         "stop_id": "133_01",
         "name": "ＪＦ大芦出張所前",
-        "arrival": "09:40",
-        "departure": "09:40",
+        "arrival": "09:50",
+        "departure": "09:50",
         "sequence": 7
       },
       {
         "stop_id": "132_01",
         "name": "大芦浜",
-        "arrival": "09:40",
-        "departure": "09:40",
+        "arrival": "09:50",
+        "departure": "09:50",
         "sequence": 8
       },
       {
         "stop_id": "131_01",
         "name": "大碕神社前",
-        "arrival": "09:41",
-        "departure": "09:41",
+        "arrival": "09:51",
+        "departure": "09:51",
         "sequence": 9
       },
       {
         "stop_id": "130_01",
         "name": "小具",
-        "arrival": "09:41",
-        "departure": "09:41",
+        "arrival": "09:51",
+        "departure": "09:51",
         "sequence": 10
       },
       {
         "stop_id": "129_01",
         "name": "マリン保育所前",
-        "arrival": "09:42",
-        "departure": "09:42",
+        "arrival": "09:52",
+        "departure": "09:52",
         "sequence": 11
       },
       {
         "stop_id": "128_01",
         "name": "マリンゲートしまね前",
-        "arrival": "09:43",
-        "departure": "09:43",
+        "arrival": "09:53",
+        "departure": "09:53",
         "sequence": 12
       },
       {
         "stop_id": "127_01",
         "name": "北垣",
-        "arrival": "09:43",
-        "departure": "09:43",
+        "arrival": "09:53",
+        "departure": "09:53",
         "sequence": 13
       },
       {
         "stop_id": "125_01",
         "name": "ＪＦ加賀出張所前",
-        "arrival": "09:45",
-        "departure": "09:45",
+        "arrival": "09:55",
+        "departure": "09:55",
         "sequence": 14
       },
       {
         "stop_id": "124_01",
         "name": "マリンプラザ前",
-        "arrival": "09:46",
-        "departure": "09:46",
+        "arrival": "09:56",
+        "departure": "09:56",
         "sequence": 15
       },
       {
         "stop_id": "123_01",
         "name": "新津集会所前",
-        "arrival": "09:46",
-        "departure": "09:46",
+        "arrival": "09:56",
+        "departure": "09:56",
         "sequence": 16
       },
       {
         "stop_id": "122_01",
         "name": "JA島根前",
-        "arrival": "09:47",
-        "departure": "09:47",
+        "arrival": "09:57",
+        "departure": "09:57",
         "sequence": 17
       },
       {
         "stop_id": "121_01",
         "name": "旧島根支所前",
-        "arrival": "09:47",
-        "departure": "09:47",
+        "arrival": "09:57",
+        "departure": "09:57",
         "sequence": 18
       },
       {
         "stop_id": "120_01",
         "name": "島根中学校前",
-        "arrival": "09:48",
-        "departure": "09:48",
+        "arrival": "09:58",
+        "departure": "09:58",
         "sequence": 19
       },
       {
         "stop_id": "115_01",
         "name": "島根小学校前",
-        "arrival": "09:49",
-        "departure": "09:49",
+        "arrival": "09:59",
+        "departure": "09:59",
         "sequence": 20
       },
       {
         "stop_id": "116_01",
         "name": "加賀別所入口",
-        "arrival": "09:49",
-        "departure": "09:49",
+        "arrival": "09:59",
+        "departure": "09:59",
         "sequence": 21
       },
       {
         "stop_id": "117_01",
         "name": "加賀別所下",
-        "arrival": "09:51",
-        "departure": "09:51",
+        "arrival": "10:01",
+        "departure": "10:01",
         "sequence": 22
       },
       {
         "stop_id": "118_01",
         "name": "加賀別所集会所前",
-        "arrival": "09:53",
-        "departure": "09:53",
+        "arrival": "10:03",
+        "departure": "10:03",
         "sequence": 23
       },
       {
         "stop_id": "119_01",
         "name": "加賀別所",
-        "arrival": "09:54",
-        "departure": "09:54",
+        "arrival": "10:04",
+        "departure": "10:04",
         "sequence": 24
       },
       {
         "stop_id": "114_01",
         "name": "佐波",
-        "arrival": "10:01",
-        "departure": "10:01",
+        "arrival": "10:11",
+        "departure": "10:11",
         "sequence": 25
       },
       {
         "stop_id": "113_01",
         "name": "釜屋橋",
-        "arrival": "10:07",
-        "departure": "10:07",
+        "arrival": "10:17",
+        "departure": "10:17",
         "sequence": 26
       },
       {
         "stop_id": "112_01",
         "name": "野波",
-        "arrival": "10:08",
-        "departure": "10:08",
+        "arrival": "10:18",
+        "departure": "10:18",
         "sequence": 27
       },
       {
         "stop_id": "111_01",
         "name": "代官家橋",
-        "arrival": "10:09",
-        "departure": "10:09",
+        "arrival": "10:19",
+        "departure": "10:19",
         "sequence": 28
       },
       {
         "stop_id": "110_01",
         "name": "野波海浜公園",
-        "arrival": "10:10",
-        "departure": "10:10",
+        "arrival": "10:20",
+        "departure": "10:20",
         "sequence": 29
       },
       {
         "stop_id": "106_01",
         "name": "花水樹",
-        "arrival": "10:11",
-        "departure": "10:11",
+        "arrival": "10:21",
+        "departure": "10:21",
         "sequence": 30
       },
       {
         "stop_id": "107_01",
         "name": "小波",
-        "arrival": "10:12",
-        "departure": "10:12",
+        "arrival": "10:22",
+        "departure": "10:22",
         "sequence": 31
       },
       {
         "stop_id": "108_01",
         "name": "多古",
-        "arrival": "10:14",
-        "departure": "10:14",
+        "arrival": "10:24",
+        "departure": "10:24",
         "sequence": 32
       },
       {
         "stop_id": "109_01",
         "name": "沖泊",
-        "arrival": "10:16",
-        "departure": "10:16",
+        "arrival": "10:26",
+        "departure": "10:26",
         "sequence": 33
       },
       {
         "stop_id": "105_01",
         "name": "瀬崎",
-        "arrival": "10:23",
-        "departure": "10:23",
+        "arrival": "10:33",
+        "departure": "10:33",
         "sequence": 34
       },
       {
         "stop_id": "104_01",
         "name": "雨谷入口",
-        "arrival": "10:25",
-        "departure": "10:25",
+        "arrival": "10:35",
+        "departure": "10:35",
         "sequence": 35
       },
       {
         "stop_id": "103_01",
         "name": "野井",
-        "arrival": "10:26",
-        "departure": "10:26",
+        "arrival": "10:36",
+        "departure": "10:36",
         "sequence": 36
       },
       {
         "stop_id": "102_01",
         "name": "JF野井出張所前",
-        "arrival": "10:26",
-        "departure": "10:26",
+        "arrival": "10:36",
+        "departure": "10:36",
         "sequence": 37
       }
     ]
