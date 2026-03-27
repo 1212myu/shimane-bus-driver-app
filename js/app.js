@@ -84,7 +84,7 @@ const App = {
 
     if (!this.currentTrip) return;
 
-    const result = Matching.updateProgress(lat, lon);
+    const result = Matching.updateProgress(lat, lon, accuracy);
     if (!result) return;
 
     if (result.status === 'complete') {
