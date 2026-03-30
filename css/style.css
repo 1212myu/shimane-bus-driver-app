@@ -216,7 +216,7 @@ html, body {
   align-items: center;
   padding: 6px 0;
   border-bottom: 1px solid #1a1a2e;
-  font-size: 18px;
+  font-size: 24px;
 }
 .upcoming-stop:last-child {
   border-bottom: none;
