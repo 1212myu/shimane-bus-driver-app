@@ -38,11 +38,13 @@ const Matching = {
     return currDist < prevDist;
   },
 
-  // 時刻ガード: 予定時刻5分以上前は通過判定しない
+  // 時刻ガード: 予定時刻より早すぎる場合は通過判定しない
+  // 佐波（114_01）は回転場のため1分、それ以外は5分
   isTooEarlyForStop(stop) {
     const now = new Date();
     const scheduledTime = this.parseTime(stop.departure);
-    return (scheduledTime.getTime() - now.getTime()) > 5 * 60 * 1000;
+    const guardMinutes = (stop.stop_id === '114_01') ? 1 : 5;
+    return (scheduledTime.getTime() - now.getTime()) > guardMinutes * 60 * 1000;
   },
 
   // GPS位置から進行状況を更新
