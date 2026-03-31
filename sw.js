@@ -1,4 +1,4 @@
-const CACHE_NAME = 'shimane-bus-v6-current';
+const CACHE_NAME = 'shimane-bus-v7';
 const ASSETS = [
   './',
   './index.html',
