@@ -43,12 +43,22 @@ const FareCounter = {
   },
 
   init() {
+    // 既に activeTripKey/viewingTripKey が設定されていれば保持（運行中のタブ切替時に
+    // loadData で 'outside' に上書きされるのを防ぐ）
+    const preservedActive = this.activeTripKey;
+    const preservedViewing = this.viewingTripKey;
+
     this.loadData();
+
+    if (preservedActive) {
+      this.activeTripKey = preservedActive;
+    }
     if (!this.activeTripKey) {
       this.ensureOutsideTrip();
       this.activeTripKey = 'outside';
     }
-    this.viewingTripKey = this.activeTripKey;
+    // viewingTripKey は呼び出し側で明示設定されていれば尊重、そうでなければ active に同期
+    this.viewingTripKey = preservedViewing || this.activeTripKey;
 
     if (!this.initialized) {
       this.setupEventListeners();
@@ -73,10 +83,11 @@ const FareCounter = {
     const label = `${trip.first_time} ${trip.first_stop}発→${lastStop.name}`;
     if (!this.trips.find(t => t.key === key)) {
       this.trips.push({ key, label });
-      this.saveData();
     }
     this.activeTripKey = key;
     this.viewingTripKey = key;
+    // activeTripKey 更新後に保存（順序重要：以前は saveData が先で古い activeTripKey が保存されていた）
+    this.saveData();
   },
 
   finalizeTrip() {
