@@ -142,9 +142,13 @@ const FareCounter = {
       }
     });
 
-    // 戻るボタン
+    // 戻るボタン（運行中なら運行画面へ、それ以外は便選択へ）
     document.getElementById('btn-fare-back').addEventListener('click', () => {
-      UI.showScreen('screen-select');
+      if (App.currentTrip) {
+        App.switchToDriving();
+      } else {
+        UI.showScreen('screen-select');
+      }
     });
   },
 

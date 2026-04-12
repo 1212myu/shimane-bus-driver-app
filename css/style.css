@@ -597,6 +597,79 @@ html, body {
   margin-top: 20px;
 }
 
+/* === 画面切替タブ === */
+.screen-tab {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 800;
+  letter-spacing: 2px;
+  -webkit-tap-highlight-color: transparent;
+}
+.screen-tab.tab-fare {
+  background: #0f3460;
+  color: #4fc3f7;
+  border-top: 2px solid #4fc3f7;
+}
+.screen-tab.tab-fare:active {
+  background: #1a3a6e;
+}
+.screen-tab.tab-driving {
+  background: #1a3a2e;
+  color: #00C853;
+  border-top: 2px solid #00C853;
+}
+.screen-tab.tab-driving:active {
+  background: #1a4a3e;
+}
+
+/* タブ表示時は画面下部にパディング追加 */
+#screen-driving.has-tab {
+  padding-bottom: 48px;
+}
+#screen-fare.has-tab {
+  padding-bottom: 48px;
+}
+
+/* 画面スライドアニメーション */
+.screen.slide-out-left {
+  animation: slideOutLeft 0.25s ease-in-out forwards;
+}
+.screen.slide-in-right {
+  animation: slideInRight 0.25s ease-in-out forwards;
+}
+.screen.slide-out-right {
+  animation: slideOutRight 0.25s ease-in-out forwards;
+}
+.screen.slide-in-left {
+  animation: slideInLeft 0.25s ease-in-out forwards;
+}
+
+@keyframes slideOutLeft {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-30%); opacity: 0; }
+}
+@keyframes slideInRight {
+  from { transform: translateX(30%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideOutRight {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(30%); opacity: 0; }
+}
+@keyframes slideInLeft {
+  from { transform: translateX(-30%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
 /* GPS精度表示 */
 .gps-accuracy {
   position: fixed;

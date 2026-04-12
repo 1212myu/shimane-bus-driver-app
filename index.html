@@ -36,7 +36,7 @@
   <div id="screen-fare" class="screen">
     <header class="header-driving">
       <span id="fare-trip-label">第1便</span>
-      <button id="btn-fare-back" class="btn-back">← 便選択</button>
+      <button id="btn-fare-back" class="btn-back">← 戻る</button>
     </header>
 
     <div class="fare-status-bar">
@@ -88,6 +88,9 @@
       </table>
       <button id="btn-fare-clear" class="fare-clear-btn">データクリア</button>
     </div>
+
+    <!-- 運行タブ（運行中に精算画面から戻る用） -->
+    <div id="tab-to-driving" class="screen-tab tab-driving hidden" onclick="App.switchToDriving()">運行</div>
 
     <!-- 精算モーダル -->
     <div id="fare-settlement" class="hidden">
@@ -145,6 +148,9 @@
         <button id="btn-complete-back" class="btn-large">便選択に戻る</button>
       </div>
     </div>
+
+    <!-- 精算タブ（運行中のみ表示） -->
+    <div id="tab-to-fare" class="screen-tab tab-fare" onclick="App.switchToFare()">精算</div>
   </div>
 
   <script src="js/gtfs.js"></script>

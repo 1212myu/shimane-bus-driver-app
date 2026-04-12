@@ -38,11 +38,31 @@ const App = {
       this.stopTrip();
     });
 
-    // 精算カウンター
+    // 精算カウンター（便選択画面から）
     document.getElementById('btn-open-fare').addEventListener('click', () => {
       UI.showScreen('screen-fare');
+      document.getElementById('tab-to-driving').classList.add('hidden');
+      document.getElementById('screen-fare').classList.remove('has-tab');
       FareCounter.init();
     });
+  },
+
+  // 運行画面 → 精算画面（タブ切替、GPS維持）
+  switchToFare() {
+    if (!this.currentTrip) return;
+    FareCounter.init();
+    UI.slideScreen('screen-driving', 'screen-fare', 'left');
+    document.getElementById('tab-to-fare').classList.add('hidden');
+    document.getElementById('tab-to-driving').classList.remove('hidden');
+    document.getElementById('screen-fare').classList.add('has-tab');
+  },
+
+  // 精算画面 → 運行画面（タブ切替、GPS維持）
+  switchToDriving() {
+    if (!this.currentTrip) return;
+    UI.slideScreen('screen-fare', 'screen-driving', 'right');
+    document.getElementById('tab-to-driving').classList.add('hidden');
+    document.getElementById('tab-to-fare').classList.remove('hidden');
   },
 
   startTrip(trip) {
@@ -64,6 +84,10 @@ const App = {
 
     // GPS精度表示
     this.addGPSIndicator();
+
+    // 精算タブ表示
+    document.getElementById('tab-to-fare').classList.remove('hidden');
+    document.getElementById('screen-driving').classList.add('has-tab');
   },
 
   stopTrip() {
@@ -78,6 +102,12 @@ const App = {
     }
     this.releaseWakeLock();
     this.removeGPSIndicator();
+
+    // タブを非表示
+    document.getElementById('tab-to-fare').classList.add('hidden');
+    document.getElementById('tab-to-driving').classList.add('hidden');
+    document.getElementById('screen-driving').classList.remove('has-tab');
+    document.getElementById('screen-fare').classList.remove('has-tab');
 
     UI.showScreen('screen-select');
     // 便選択画面を再描画（時刻ハイライト更新）

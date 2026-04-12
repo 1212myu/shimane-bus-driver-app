@@ -1,8 +1,27 @@
 // 画面表示更新
 const UI = {
   showScreen(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.screen').forEach(s => {
+      s.classList.remove('active', 'slide-out-left', 'slide-in-right', 'slide-out-right', 'slide-in-left');
+    });
     document.getElementById(id).classList.add('active');
+  },
+
+  // スライドアニメーション付き画面切替（GPS等を止めない）
+  slideScreen(fromId, toId, direction) {
+    const from = document.getElementById(fromId);
+    const to = document.getElementById(toId);
+    const outClass = direction === 'left' ? 'slide-out-left' : 'slide-out-right';
+    const inClass = direction === 'left' ? 'slide-in-right' : 'slide-in-left';
+
+    to.classList.remove('slide-out-left', 'slide-in-right', 'slide-out-right', 'slide-in-left');
+    to.classList.add('active', inClass);
+
+    from.classList.add(outClass);
+    from.addEventListener('animationend', function handler() {
+      from.removeEventListener('animationend', handler);
+      from.classList.remove('active', outClass);
+    });
   },
 
   // 便選択画面の表示
