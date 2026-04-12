@@ -6,6 +6,7 @@ const App = {
 
   async init() {
     await GTFS.load();
+    BusRealtime.init();
     this.setupSelectScreen();
     this.setupEventListeners();
     this.registerServiceWorker();
@@ -93,6 +94,9 @@ const App = {
     // 精算カウンターと便を連携
     FareCounter.loadData();
     FareCounter.linkTrip(trip);
+
+    // リアルタイム位置共有開始
+    BusRealtime.startTrip(trip);
   },
 
   stopTrip() {
@@ -110,6 +114,9 @@ const App = {
 
     // 精算カウンターの便を確定
     FareCounter.finalizeTrip();
+
+    // リアルタイム位置共有終了
+    BusRealtime.endTrip();
 
     // タブを非表示
     document.getElementById('tab-to-fare').classList.add('hidden');
@@ -139,11 +146,11 @@ const App = {
 
     if (result.status === 'early_warning') {
       Alert.show(result.stop.name, result.scheduledTime);
-      // 通常表示も更新
       const state = Matching.getState(lat, lon);
       if (state && state.status === 'driving') {
         this.updateDrivingUI(state);
       }
+      BusRealtime.sendUpdate(lat, lon, accuracy, state);
       return;
     }
 
@@ -155,6 +162,7 @@ const App = {
     if (result.status === 'driving') {
       this.updateDrivingUI(result);
     }
+    BusRealtime.sendUpdate(lat, lon, accuracy, result);
   },
 
   updateDrivingUI(state) {
