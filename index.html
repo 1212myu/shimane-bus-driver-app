@@ -27,6 +27,81 @@
       <p>本日は全便運休です</p>
     </div>
     <div id="trip-list"></div>
+    <div class="fare-counter-entry">
+      <button id="btn-open-fare" class="btn-fare-open">精算カウンター</button>
+    </div>
+  </div>
+
+  <!-- 精算カウンター画面 -->
+  <div id="screen-fare" class="screen">
+    <header class="header-driving">
+      <span id="fare-trip-label">第1便</span>
+      <button id="btn-fare-back" class="btn-back">← 便選択</button>
+    </header>
+
+    <div class="fare-status-bar">
+      <span id="fare-trip-count">0人</span>
+      <span id="fare-last-entry"></span>
+    </div>
+
+    <!-- 旅客区分 -->
+    <div class="fare-toggle-group">
+      <button class="ptype-btn active" data-value="大人">大人</button>
+      <button class="ptype-btn" data-value="小人">小人</button>
+      <button class="ptype-btn" data-value="障がい者">障がい者</button>
+    </div>
+
+    <!-- 支払方法 -->
+    <div class="fare-toggle-group">
+      <button class="payment-btn active" data-value="現金">現金</button>
+      <button class="payment-btn" data-value="回数券">回数券</button>
+      <button class="payment-btn" data-value="定期券">定期券</button>
+      <button class="payment-btn" data-value="無料">無料</button>
+    </div>
+
+    <!-- 運賃ボタン -->
+    <div class="fare-grid">
+      <button class="fare-btn" data-fare="200">200</button>
+      <button class="fare-btn" data-fare="250">250</button>
+      <button class="fare-btn" data-fare="300">300</button>
+      <button class="fare-btn" data-fare="350">350</button>
+      <button class="fare-btn" data-fare="400">400</button>
+      <button class="fare-btn" data-fare="500">500</button>
+      <button class="fare-btn" data-fare="550">550</button>
+    </div>
+
+    <!-- 操作ボタン -->
+    <div class="fare-actions">
+      <button id="btn-fare-undo" class="fare-action-btn undo">取消</button>
+      <button id="btn-fare-next-trip" class="fare-action-btn next-trip">便区切り</button>
+      <button id="btn-fare-settle" class="fare-action-btn settle">精算</button>
+    </div>
+
+    <!-- 日計サマリー -->
+    <div class="fare-daily-summary">
+      <div class="fare-summary-title">本日の集計</div>
+      <table class="fare-summary-table">
+        <thead>
+          <tr><th>支払方法</th><th>人数</th><th>金額</th></tr>
+        </thead>
+        <tbody id="fare-summary-body"></tbody>
+      </table>
+      <button id="btn-fare-clear" class="fare-clear-btn">データクリア</button>
+    </div>
+
+    <!-- 精算モーダル -->
+    <div id="fare-settlement" class="hidden">
+      <div class="settle-content">
+        <h2 class="settle-title">精算結果</h2>
+        <div id="settle-trips"></div>
+        <div class="settle-grand-total">
+          <div class="settle-row"><span>総乗客数</span><span id="settle-total-count"></span></div>
+          <div class="settle-row"><span>総金額</span><span id="settle-total-amount"></span></div>
+          <div class="settle-row cash-highlight"><span>現金合計</span><span id="settle-cash-amount"></span></div>
+        </div>
+        <button id="btn-settle-close" class="btn-large">閉じる</button>
+      </div>
+    </div>
   </div>
 
   <!-- 運行支援画面 -->
@@ -77,6 +152,7 @@
   <script src="js/matching.js"></script>
   <script src="js/alert.js"></script>
   <script src="js/ui.js"></script>
+  <script src="js/fare-counter.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

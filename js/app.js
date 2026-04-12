@@ -37,6 +37,12 @@ const App = {
       UI.hideComplete();
       this.stopTrip();
     });
+
+    // 精算カウンター
+    document.getElementById('btn-open-fare').addEventListener('click', () => {
+      UI.showScreen('screen-fare');
+      FareCounter.init();
+    });
   },
 
   startTrip(trip) {

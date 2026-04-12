@@ -1,4 +1,4 @@
-const CACHE_NAME = 'shimane-bus-v7';
+const CACHE_NAME = 'shimane-bus-v8';
 const ASSETS = [
   './',
   './index.html',
@@ -9,6 +9,7 @@ const ASSETS = [
   './js/matching.js',
   './js/ui.js',
   './js/alert.js',
+  './js/fare-counter.js',
   './data/stops.json',
   './data/trips.json',
   './data/calendar.json',
