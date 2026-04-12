@@ -416,6 +416,35 @@ html, body {
   font-weight: bold;
 }
 
+/* 障がい者サブ区分 */
+.fare-toggle-sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px 8px;
+}
+.fare-toggle-sub .sub-label {
+  font-size: 13px;
+  color: #888;
+  flex-shrink: 0;
+}
+.fare-toggle-sub button {
+  flex: 1;
+  padding: 6px 4px;
+  font-size: 14px;
+  background: #16213e;
+  color: #999;
+  border: 1px solid #333;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.fare-toggle-sub button.active {
+  background: #0f3460;
+  color: #4fc3f7;
+  border-color: #4fc3f7;
+  font-weight: bold;
+}
+
 /* 運賃ボタングリッド */
 .fare-grid {
   display: grid;
@@ -437,6 +466,25 @@ html, body {
 .fare-btn:active {
   background: #1a3a6e;
   border-color: #4fc3f7;
+}
+
+/* +1人ボタン（定期券・無料用） */
+.fare-count-area {
+  padding: 8px 12px;
+}
+.btn-fare-count {
+  width: 100%;
+  padding: 28px 8px;
+  font-size: 28px;
+  font-weight: bold;
+  background: #16213e;
+  color: #4fc3f7;
+  border: 2px solid #4fc3f7;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.btn-fare-count:active {
+  background: #1a3a6e;
 }
 
 /* 便タブバー */
@@ -590,16 +638,16 @@ html, body {
   color: #4fc3f7;
   margin-bottom: 20px;
 }
-.settle-trip {
+.settle-section {
   background: #1a1a2e;
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 12px;
 }
-.settle-trip-title {
-  font-size: 16px;
+.settle-section-title {
+  font-size: 14px;
   font-weight: bold;
-  color: #e0e0e0;
+  color: #888;
   margin-bottom: 8px;
   padding-bottom: 4px;
   border-bottom: 1px solid #333;
@@ -611,27 +659,44 @@ html, body {
   font-size: 16px;
   color: #ccc;
 }
-.settle-grand-total {
-  background: #16213e;
-  border-radius: 8px;
-  padding: 12px;
-  margin: 16px 0;
-  border: 1px solid #0f3460;
+.settle-row-total {
+  font-weight: bold;
+  color: #e0e0e0;
+  padding-top: 6px;
+  margin-top: 4px;
+  border-top: 1px solid #444;
 }
-.settle-grand-total .settle-row {
-  font-size: 18px;
-  padding: 6px 0;
+.settle-cash-box {
+  background: #1a1a0a;
+  border: 2px solid #FFD600;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 12px;
+  text-align: center;
 }
-.cash-highlight {
+.settle-cash-label {
+  font-size: 16px;
   color: #FFD600;
   font-weight: bold;
-  font-size: 20px;
-  padding-top: 8px;
-  margin-top: 4px;
-  border-top: 1px solid #555;
+  margin-bottom: 4px;
 }
-.cash-highlight span {
+.settle-cash-amount {
+  font-size: 36px;
+  font-weight: bold;
   color: #FFD600;
+  font-variant-numeric: tabular-nums;
+}
+.settle-trip-detail {
+  padding: 6px 0;
+  border-bottom: 1px solid #333;
+}
+.settle-trip-detail:last-child {
+  border-bottom: none;
+}
+.settle-trip-name {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 2px;
 }
 #fare-settlement .btn-large {
   display: block;

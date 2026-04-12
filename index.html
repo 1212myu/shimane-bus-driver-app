@@ -47,13 +47,6 @@
     <!-- 便タブ（複数便ある場合に表示） -->
     <div id="fare-trip-tabs" class="fare-trip-tabs"></div>
 
-    <!-- 旅客区分 -->
-    <div class="fare-toggle-group">
-      <button class="ptype-btn active" data-value="大人">大人</button>
-      <button class="ptype-btn" data-value="小人">小人</button>
-      <button class="ptype-btn" data-value="障がい者">障がい者</button>
-    </div>
-
     <!-- 支払方法 -->
     <div class="fare-toggle-group">
       <button class="payment-btn active" data-value="現金">現金</button>
@@ -62,8 +55,22 @@
       <button class="payment-btn" data-value="無料">無料</button>
     </div>
 
-    <!-- 運賃ボタン -->
-    <div class="fare-grid">
+    <!-- 旅客区分（定期券・無料時は非表示） -->
+    <div id="ptype-group" class="fare-toggle-group">
+      <button class="ptype-btn active" data-value="大人">大人</button>
+      <button class="ptype-btn" data-value="小人">小人</button>
+      <button class="ptype-btn" data-value="障がい者">障がい者</button>
+    </div>
+
+    <!-- 障がい者サブ区分（障がい者選択時のみ表示） -->
+    <div id="disabled-sub-group" class="fare-toggle-sub hidden">
+      <span class="sub-label">障がい者区分:</span>
+      <button class="disabled-sub-btn active" data-value="大人">大人</button>
+      <button class="disabled-sub-btn" data-value="小人">小人</button>
+    </div>
+
+    <!-- 運賃ボタン（現金・回数券時） -->
+    <div id="fare-grid-area" class="fare-grid">
       <button class="fare-btn" data-fare="200">200</button>
       <button class="fare-btn" data-fare="250">250</button>
       <button class="fare-btn" data-fare="300">300</button>
@@ -71,6 +78,11 @@
       <button class="fare-btn" data-fare="400">400</button>
       <button class="fare-btn" data-fare="500">500</button>
       <button class="fare-btn" data-fare="550">550</button>
+    </div>
+
+    <!-- +1人ボタン（定期券・無料時） -->
+    <div id="fare-count-area" class="fare-count-area hidden">
+      <button id="btn-fare-count" class="btn-fare-count">＋1人</button>
     </div>
 
     <!-- 操作ボタン -->
@@ -97,13 +109,8 @@
     <!-- 精算モーダル -->
     <div id="fare-settlement" class="hidden">
       <div class="settle-content">
-        <h2 class="settle-title">精算結果</h2>
-        <div id="settle-trips"></div>
-        <div class="settle-grand-total">
-          <div class="settle-row"><span>総乗客数</span><span id="settle-total-count"></span></div>
-          <div class="settle-row"><span>総金額</span><span id="settle-total-amount"></span></div>
-          <div class="settle-row cash-highlight"><span>現金合計</span><span id="settle-cash-amount"></span></div>
-        </div>
+        <h2 class="settle-title">本日の精算</h2>
+        <div id="settle-body"></div>
         <button id="btn-settle-close" class="btn-large">閉じる</button>
       </div>
     </div>
