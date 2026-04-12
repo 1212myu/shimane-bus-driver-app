@@ -1,4 +1,4 @@
-// 精算カウンター機能
+// 精算カウンター機能（v2: 便連携対応）
 const FareCounter = {
   FARES: [200, 250, 300, 350, 400, 500, 550],
   PAYMENT_METHODS: ['現金', '回数券', '定期券', '無料'],
@@ -7,14 +7,24 @@ const FareCounter = {
   STORAGE_KEY: 'fare_counter_data',
 
   // 状態
-  records: [],       // 全記録 [{fare, payment, passenger, time, tripIndex}]
-  tripIndex: 0,      // 現在の便番号
+  records: [],       // 全記録 [{fare, payment, passenger, time, tripKey}]
+  trips: [],         // 便リスト [{key, label}] — 登録順
+  activeTripKey: null,   // 現在入力中の便キー
+  viewingTripKey: null,  // 表示中の便キー（タブ切替で過去便も編集可能）
   selectedPayment: '現金',
   selectedPassenger: '大人',
   initialized: false,
 
   init() {
     this.loadData();
+    // activeTripKey がなければ便外を設定
+    if (!this.activeTripKey) {
+      this.ensureOutsideTrip();
+      this.activeTripKey = 'outside';
+    }
+    // 表示中の便 = アクティブ便
+    this.viewingTripKey = this.activeTripKey;
+
     if (!this.initialized) {
       this.setupEventListeners();
       this.initialized = true;
@@ -24,6 +34,38 @@ const FareCounter = {
     this.render();
   },
 
+  // --- 便連携 ---
+
+  // 便外エントリを確保
+  ensureOutsideTrip() {
+    if (!this.trips.find(t => t.key === 'outside')) {
+      this.trips.unshift({ key: 'outside', label: '便外' });
+    }
+  },
+
+  // 運行開始時に呼ばれる
+  linkTrip(trip) {
+    const lastStop = trip.stop_times[trip.stop_times.length - 1];
+    const key = trip.trip_id;
+    const label = `${trip.first_time} ${trip.first_stop}発→${lastStop.name}`;
+    // 既に同じ便があれば追加しない（再開時など）
+    if (!this.trips.find(t => t.key === key)) {
+      this.trips.push({ key, label });
+      this.saveData();
+    }
+    this.activeTripKey = key;
+    this.viewingTripKey = key;
+  },
+
+  // 運行完了/便選択に戻る時に呼ばれる
+  finalizeTrip() {
+    // 便外に戻す
+    this.ensureOutsideTrip();
+    this.activeTripKey = 'outside';
+    this.viewingTripKey = 'outside';
+    this.saveData();
+  },
+
   // --- データ永続化 ---
   loadData() {
     try {
@@ -31,17 +73,38 @@ const FareCounter = {
       if (saved) {
         const data = JSON.parse(saved);
         this.records = data.records || [];
-        this.tripIndex = data.tripIndex || 0;
+        this.trips = data.trips || [];
+        this.activeTripKey = data.activeTripKey || null;
+        // v1→v2マイグレーション: tripIndex → tripKey
+        if (this.records.length > 0 && this.records[0].tripIndex !== undefined && !this.records[0].tripKey) {
+          this.migrateFromV1(data);
+        }
       }
     } catch (e) {
       console.warn('精算データ読み込みエラー:', e);
     }
   },
 
+  migrateFromV1(data) {
+    // v1の tripIndex ベースのデータをv2に変換
+    const maxIdx = (data.tripIndex || 0);
+    this.trips = [];
+    for (let i = 0; i <= maxIdx; i++) {
+      this.trips.push({ key: `legacy_${i}`, label: `第${i + 1}便` });
+    }
+    for (const r of this.records) {
+      r.tripKey = `legacy_${r.tripIndex || 0}`;
+      delete r.tripIndex;
+    }
+    this.activeTripKey = `legacy_${maxIdx}`;
+    this.saveData();
+  },
+
   saveData() {
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify({
       records: this.records,
-      tripIndex: this.tripIndex,
+      trips: this.trips,
+      activeTripKey: this.activeTripKey,
       savedAt: new Date().toISOString()
     }));
   },
@@ -53,28 +116,27 @@ const FareCounter = {
       payment: this.selectedPayment,
       passenger: this.selectedPassenger,
       time: new Date().toISOString(),
-      tripIndex: this.tripIndex
+      tripKey: this.viewingTripKey
     });
     this.saveData();
     this.render();
   },
 
   undoLast() {
-    if (this.records.length === 0) return;
-    this.records.pop();
-    this.saveData();
-    this.render();
+    // 表示中の便の最後のレコードを取消
+    // records配列を逆順に探して該当便の最後のレコードを削除
+    for (let i = this.records.length - 1; i >= 0; i--) {
+      if (this.records[i].tripKey === this.viewingTripKey) {
+        this.records.splice(i, 1);
+        this.saveData();
+        this.render();
+        return;
+      }
+    }
   },
 
-  nextTrip() {
-    if (this.getCurrentTripRecords().length === 0 && this.records.length > 0) return;
-    this.tripIndex++;
-    this.saveData();
-    this.render();
-  },
-
-  getCurrentTripRecords() {
-    return this.records.filter(r => r.tripIndex === this.tripIndex);
+  getRecordsForTrip(tripKey) {
+    return this.records.filter(r => r.tripKey === tripKey);
   },
 
   // --- 集計 ---
@@ -121,9 +183,6 @@ const FareCounter = {
     // 取消ボタン
     document.getElementById('btn-fare-undo').addEventListener('click', () => this.undoLast());
 
-    // 便区切り
-    document.getElementById('btn-fare-next-trip').addEventListener('click', () => this.nextTrip());
-
     // 精算ボタン
     document.getElementById('btn-fare-settle').addEventListener('click', () => this.showSettlement());
 
@@ -136,7 +195,11 @@ const FareCounter = {
     document.getElementById('btn-fare-clear').addEventListener('click', () => {
       if (confirm('本日の精算データをすべて削除しますか？')) {
         this.records = [];
-        this.tripIndex = 0;
+        this.trips = [];
+        this.activeTripKey = null;
+        this.ensureOutsideTrip();
+        this.activeTripKey = 'outside';
+        this.viewingTripKey = 'outside';
         this.saveData();
         this.render();
       }
@@ -158,46 +221,125 @@ const FareCounter = {
     });
   },
 
+  // --- 便タブ切替 ---
+  switchToTrip(tripKey) {
+    this.viewingTripKey = tripKey;
+    this.render();
+  },
+
   // --- 描画 ---
   render() {
-    // 現在の便の記録
-    const tripRecords = this.getCurrentTripRecords();
-    const tripSummary = this.getSummary(tripRecords);
+    const viewKey = this.viewingTripKey;
+    const viewTrip = this.trips.find(t => t.key === viewKey);
+    const viewRecords = this.getRecordsForTrip(viewKey);
+    const viewSummary = this.getSummary(viewRecords);
 
-    // 便番号
-    document.getElementById('fare-trip-label').textContent = `第${this.tripIndex + 1}便`;
+    // ヘッダーに便情報表示
+    const labelEl = document.getElementById('fare-trip-label');
+    if (viewTrip) {
+      labelEl.textContent = viewTrip.label;
+    } else {
+      labelEl.textContent = '精算';
+    }
 
     // 現在便の人数
-    document.getElementById('fare-trip-count').textContent = `${tripRecords.length}人`;
+    document.getElementById('fare-trip-count').textContent = `${viewRecords.length}人`;
 
     // 直前の入力表示
     const lastEl = document.getElementById('fare-last-entry');
-    if (tripRecords.length > 0) {
-      const last = tripRecords[tripRecords.length - 1];
+    if (viewRecords.length > 0) {
+      const last = viewRecords[viewRecords.length - 1];
       lastEl.textContent = `直前: ${last.fare}円 ${last.payment} ${last.passenger}`;
     } else {
       lastEl.textContent = '';
     }
 
-    // 1日の集計テーブル
-    this.renderDailySummary();
+    // 便タブ描画
+    this.renderTripTabs();
+
+    // 便別集計表示
+    this.renderTripSummary();
   },
 
-  renderDailySummary() {
-    const allSummary = this.getSummary(this.records);
-    const tbody = document.getElementById('fare-summary-body');
+  renderTripTabs() {
+    const container = document.getElementById('fare-trip-tabs');
+    if (!container) return;
+    // レコードがある便 + アクティブ便を表示
+    const tripsToShow = this.trips.filter(t =>
+      t.key === this.activeTripKey || this.getRecordsForTrip(t.key).length > 0
+    );
+
+    if (tripsToShow.length <= 1) {
+      container.innerHTML = '';
+      return;
+    }
 
     let html = '';
-    for (const method of this.PAYMENT_METHODS) {
-      const d = allSummary.byMethod[method];
-      if (d.count > 0) {
-        html += `<tr>
-          <td>${method}</td>
-          <td>${d.count}人</td>
-          <td>${d.amount.toLocaleString()}円</td>
+    for (const t of tripsToShow) {
+      const isActive = t.key === this.viewingTripKey;
+      const count = this.getRecordsForTrip(t.key).length;
+      const shortLabel = t.key === 'outside' ? '便外' : t.label.split('発')[0] + '発';
+      html += `<button class="fare-trip-tab${isActive ? ' active' : ''}" data-trip-key="${t.key}">
+        ${shortLabel}<span class="tab-count">${count}</span>
+      </button>`;
+    }
+    container.innerHTML = html;
+
+    // タブクリックイベント
+    container.querySelectorAll('.fare-trip-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.switchToTrip(btn.dataset.tripKey);
+      });
+    });
+  },
+
+  renderTripSummary() {
+    const tbody = document.getElementById('fare-summary-body');
+
+    // 便別サマリー
+    const tripsWithData = this.trips.filter(t => this.getRecordsForTrip(t.key).length > 0);
+    let html = '';
+
+    if (tripsWithData.length > 1) {
+      // 複数便ある場合：便ごとに小計行を表示
+      for (const t of tripsWithData) {
+        const recs = this.getRecordsForTrip(t.key);
+        const summary = this.getSummary(recs);
+        const label = t.key === 'outside' ? '便外' : t.label.split('発')[0] + '発';
+        html += `<tr class="fare-trip-header-row"><td colspan="3">${label}</td></tr>`;
+        for (const method of this.PAYMENT_METHODS) {
+          const d = summary.byMethod[method];
+          if (d.count > 0) {
+            html += `<tr>
+              <td>${method}</td>
+              <td>${d.count}人</td>
+              <td>${d.amount.toLocaleString()}円</td>
+            </tr>`;
+          }
+        }
+        html += `<tr class="fare-subtotal-row">
+          <td>小計</td>
+          <td>${summary.totalCount}人</td>
+          <td>${summary.totalAmount.toLocaleString()}円</td>
         </tr>`;
       }
+    } else if (tripsWithData.length === 1) {
+      // 1便のみ：支払方法別のみ
+      const summary = this.getSummary(this.records);
+      for (const method of this.PAYMENT_METHODS) {
+        const d = summary.byMethod[method];
+        if (d.count > 0) {
+          html += `<tr>
+            <td>${method}</td>
+            <td>${d.count}人</td>
+            <td>${d.amount.toLocaleString()}円</td>
+          </tr>`;
+        }
+      }
     }
+
+    // 全体合計
+    const allSummary = this.getSummary(this.records);
     html += `<tr class="fare-total-row">
       <td>合計</td>
       <td>${allSummary.totalCount}人</td>
@@ -209,12 +351,13 @@ const FareCounter = {
   showSettlement() {
     // 便ごとの小計
     let tripHtml = '';
-    for (let i = 0; i <= this.tripIndex; i++) {
-      const recs = this.records.filter(r => r.tripIndex === i);
+    for (const t of this.trips) {
+      const recs = this.getRecordsForTrip(t.key);
       if (recs.length === 0) continue;
       const summary = this.getSummary(recs);
+      const title = t.key === 'outside' ? '便外' : t.label;
       tripHtml += `<div class="settle-trip">
-        <div class="settle-trip-title">第${i + 1}便（${summary.totalCount}人）</div>`;
+        <div class="settle-trip-title">${title}（${summary.totalCount}人）</div>`;
       for (const method of this.PAYMENT_METHODS) {
         const d = summary.byMethod[method];
         if (d.count > 0) {

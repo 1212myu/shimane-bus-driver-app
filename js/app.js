@@ -38,18 +38,19 @@ const App = {
       this.stopTrip();
     });
 
-    // 精算カウンター（便選択画面から）
+    // 精算カウンター（便選択画面から → 便外）
     document.getElementById('btn-open-fare').addEventListener('click', () => {
       UI.showScreen('screen-fare');
       document.getElementById('tab-to-driving').classList.add('hidden');
       document.getElementById('screen-fare').classList.remove('has-tab');
-      FareCounter.init();
+      FareCounter.init(); // activeTripKey未設定なら'outside'になる
     });
   },
 
   // 運行画面 → 精算画面（タブ切替、GPS維持）
   switchToFare() {
     if (!this.currentTrip) return;
+    FareCounter.viewingTripKey = FareCounter.activeTripKey;
     FareCounter.init();
     UI.slideScreen('screen-driving', 'screen-fare', 'left');
     document.getElementById('tab-to-fare').classList.add('hidden');
@@ -88,6 +89,10 @@ const App = {
     // 精算タブ表示
     document.getElementById('tab-to-fare').classList.remove('hidden');
     document.getElementById('screen-driving').classList.add('has-tab');
+
+    // 精算カウンターと便を連携
+    FareCounter.loadData();
+    FareCounter.linkTrip(trip);
   },
 
   stopTrip() {
@@ -102,6 +107,9 @@ const App = {
     }
     this.releaseWakeLock();
     this.removeGPSIndicator();
+
+    // 精算カウンターの便を確定
+    FareCounter.finalizeTrip();
 
     // タブを非表示
     document.getElementById('tab-to-fare').classList.add('hidden');

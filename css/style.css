@@ -439,6 +439,40 @@ html, body {
   border-color: #4fc3f7;
 }
 
+/* 便タブバー */
+.fare-trip-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 6px 12px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.fare-trip-tabs:empty {
+  display: none;
+}
+.fare-trip-tab {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  font-size: 13px;
+  background: #16213e;
+  color: #999;
+  border: 1px solid #333;
+  border-radius: 16px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.fare-trip-tab.active {
+  background: #0f3460;
+  color: #4fc3f7;
+  border-color: #4fc3f7;
+  font-weight: bold;
+}
+.fare-trip-tab .tab-count {
+  margin-left: 4px;
+  font-size: 11px;
+  opacity: 0.7;
+}
+
 /* 操作ボタン */
 .fare-actions {
   display: flex;
@@ -458,11 +492,6 @@ html, body {
   background: #333;
   color: #FF1744;
   border: 1px solid #FF1744;
-}
-.fare-action-btn.next-trip {
-  background: #333;
-  color: #FFD600;
-  border: 1px solid #FFD600;
 }
 .fare-action-btn.settle {
   background: #0f3460;
@@ -507,6 +536,19 @@ html, body {
 .fare-summary-table th:nth-child(2),
 .fare-summary-table td:nth-child(2) {
   text-align: center;
+}
+.fare-trip-header-row td {
+  font-size: 13px;
+  font-weight: bold;
+  color: #888;
+  padding-top: 10px;
+  border-bottom: 1px solid #333;
+}
+.fare-subtotal-row td {
+  font-weight: bold;
+  color: #ccc;
+  font-size: 14px;
+  border-bottom: 2px solid #333;
 }
 .fare-total-row td {
   font-weight: bold;
