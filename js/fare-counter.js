@@ -1,4 +1,4 @@
-// 計算カウンター（v5: タリーカウンター方式）
+// 計算カウンター（v6: タリー方式 + 旅客区分対応）
 const FareCounter = {
   CASH_FARES: [200, 250, 300, 350, 400, 500, 550],
   OTHER_CATS: ['回数券', '定期券', '無料'],
@@ -8,6 +8,8 @@ const FareCounter = {
   trips: [],
   activeTripKey: null,
   viewingTripKey: null,
+  selectedPtype: '大人',
+  disabledSub: '大人',
   initialized: false,
 
   newTripData() {
@@ -90,12 +92,42 @@ const FareCounter = {
     }));
   },
 
+  // --- 運賃計算 ---
+  calcFare(baseFare) {
+    const ptype = this.getEffectivePtype();
+    if (ptype === '大人') return baseFare;
+    if (ptype === '小人' || ptype === '障がい者') return Math.ceil(baseFare / 2 / 10) * 10;
+    if (ptype === '障がい者小人') return Math.ceil(baseFare / 4 / 10) * 10;
+    return baseFare;
+  },
+
+  getEffectivePtype() {
+    if (this.selectedPtype === '障がい者') {
+      return this.disabledSub === '小人' ? '障がい者小人' : '障がい者';
+    }
+    return this.selectedPtype;
+  },
+
   // --- 操作 ---
-  addCash(fare) {
+  addCash(baseFare) {
+    const ptype = this.getEffectivePtype();
+    const actualFare = this.calcFare(baseFare);
     const td = this.getTripData(this.viewingTripKey);
-    td.cashFares[fare] = (td.cashFares[fare] || 0) + 1;
-    td.history.push({ type: 'cash', fare });
+    td.cashFares[actualFare] = (td.cashFares[actualFare] || 0) + 1;
+    td.history.push({ type: 'cash', fare: actualFare, baseFare, ptype });
+
+    // 旅客区分別カウント
+    if (!td.ptypeCounts) td.ptypeCounts = {};
+    td.ptypeCounts[ptype] = (td.ptypeCounts[ptype] || 0) + 1;
+
     this.saveData();
+
+    // 大人以外は自動リセット
+    if (this.selectedPtype !== '大人') {
+      this.selectedPtype = '大人';
+      this.disabledSub = '大人';
+      this.updatePtypeUI();
+    }
     this.render();
   },
 
@@ -105,6 +137,11 @@ const FareCounter = {
     else if (cat === '定期券') td.pass++;
     else if (cat === '無料') td.free++;
     td.history.push({ type: 'other', cat });
+
+    if (!td.ptypeCounts) td.ptypeCounts = {};
+    const ptype = cat;
+    td.ptypeCounts[ptype] = (td.ptypeCounts[ptype] || 0) + 1;
+
     this.saveData();
     this.render();
   },
@@ -123,10 +160,16 @@ const FareCounter = {
     if (!last) return;
     if (last.type === 'cash') {
       td.cashFares[last.fare] = Math.max(0, (td.cashFares[last.fare] || 0) - 1);
+      if (last.ptype && td.ptypeCounts) {
+        td.ptypeCounts[last.ptype] = Math.max(0, (td.ptypeCounts[last.ptype] || 0) - 1);
+      }
     } else if (last.type === 'other') {
       if (last.cat === '回数券') td.coupon = Math.max(0, td.coupon - 1);
       else if (last.cat === '定期券') td.pass = Math.max(0, td.pass - 1);
       else if (last.cat === '無料') td.free = Math.max(0, td.free - 1);
+      if (td.ptypeCounts) {
+        td.ptypeCounts[last.cat] = Math.max(0, (td.ptypeCounts[last.cat] || 0) - 1);
+      }
     } else if (last.type === 'supp') {
       td.cashSupp = Math.max(0, td.cashSupp - 10);
     }
@@ -168,8 +211,46 @@ const FareCounter = {
     return total;
   },
 
+  updatePtypeUI() {
+    document.querySelectorAll('.ptype-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.ptype === this.selectedPtype)
+    );
+    document.querySelectorAll('.dsub-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.dsub === this.disabledSub)
+    );
+    const dsubEl = document.getElementById('disabled-sub');
+    dsubEl.classList.toggle('hidden', this.selectedPtype !== '障がい者');
+
+    const indicator = document.getElementById('ptype-indicator');
+    if (this.selectedPtype === '大人') {
+      indicator.textContent = '';
+    } else if (this.selectedPtype === '障がい者') {
+      const sub = this.disabledSub === '小人' ? '障がい者小人: ¼' : '障がい者: ½';
+      indicator.textContent = ` （${sub}）`;
+    } else {
+      indicator.textContent = ` （${this.selectedPtype}: ½）`;
+    }
+  },
+
   // --- イベント ---
   setupEventListeners() {
+    // 旅客区分
+    document.querySelectorAll('.ptype-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.selectedPtype = btn.dataset.ptype;
+        this.disabledSub = '大人';
+        this.updatePtypeUI();
+        this.render();
+      });
+    });
+    document.querySelectorAll('.dsub-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.disabledSub = btn.dataset.dsub;
+        this.updatePtypeUI();
+        this.render();
+      });
+    });
+
     document.getElementById('btn-supp-10').addEventListener('click', () => this.addSupplement());
     document.getElementById('btn-fare-undo').addEventListener('click', () => this.undo());
     document.getElementById('btn-fare-settle').addEventListener('click', () => this.showSettlement());
@@ -214,13 +295,20 @@ const FareCounter = {
     document.getElementById('supp-amount').textContent =
       `端数: ${td.cashSupp}円`;
 
-    // 現金タリー
-    this.renderTallyGrid('tally-cash-grid', this.CASH_FARES.map(f => ({
-      label: `${f}円`,
-      count: td.cashFares[f] || 0,
-      sub: `${((td.cashFares[f] || 0) * f).toLocaleString()}円`,
-      action: () => this.addCash(f)
-    })));
+    // 現金タリー（旅客区分に応じて表示金額を変更）
+    this.renderTallyGrid('tally-cash-grid', this.CASH_FARES.map(baseFare => {
+      const actualFare = this.calcFare(baseFare);
+      const count = td.cashFares[actualFare] || 0;
+      const isDiscounted = this.selectedPtype !== '大人';
+      const label = isDiscounted ? `${baseFare}→${actualFare}円` : `${baseFare}円`;
+      return {
+        label,
+        count,
+        sub: `${(count * actualFare).toLocaleString()}円`,
+        action: () => this.addCash(baseFare),
+        discounted: isDiscounted
+      };
+    }));
 
     // その他タリー
     const otherItems = [
@@ -237,7 +325,7 @@ const FareCounter = {
   renderTallyGrid(containerId, items) {
     const container = document.getElementById(containerId);
     container.innerHTML = items.map(item => `
-      <button class="tally-card${item.count > 0 ? ' has-count' : ''}">
+      <button class="tally-card${item.count > 0 ? ' has-count' : ''}${item.discounted ? ' discounted' : ''}">
         <span class="tally-label">${item.label}</span>
         <span class="tally-count">${item.count}</span>
         <span class="tally-sub">${item.sub}</span>
@@ -317,6 +405,21 @@ const FareCounter = {
       if (totalCoupon > 0) html += `<div class="settle-row"><span>回数券</span><span>${totalCoupon}人</span></div>`;
       if (totalPass > 0) html += `<div class="settle-row"><span>定期券</span><span>${totalPass}人</span></div>`;
       if (totalFree > 0) html += `<div class="settle-row"><span>無料</span><span>${totalFree}人</span></div>`;
+      html += '</div>';
+    }
+
+    // 旅客区分別
+    const ptypeAll = {};
+    for (const td of Object.values(this.tripData)) {
+      for (const [pt, c] of Object.entries(td.ptypeCounts || {})) {
+        if (c > 0) ptypeAll[pt] = (ptypeAll[pt] || 0) + c;
+      }
+    }
+    if (Object.keys(ptypeAll).length > 0) {
+      html += '<div class="settle-section"><div class="settle-section-title">旅客区分別</div>';
+      for (const [pt, c] of Object.entries(ptypeAll)) {
+        html += `<div class="settle-row"><span>${pt}</span><span>${c}人</span></div>`;
+      }
       html += '</div>';
     }
 

@@ -391,12 +391,62 @@ html, body {
   font-variant-numeric: tabular-nums;
 }
 
+/* 旅客区分トグル */
+.ptype-toggle {
+  display: flex;
+  gap: 6px;
+  padding: 8px 12px 4px;
+}
+.ptype-toggle .ptype-btn {
+  flex: 1;
+  padding: 10px 4px;
+  font-size: 15px;
+  background: #16213e;
+  color: #999;
+  border: 1px solid #333;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.ptype-toggle .ptype-btn.active {
+  background: #0f3460;
+  color: #4fc3f7;
+  border-color: #4fc3f7;
+  font-weight: bold;
+}
+
+/* 障がい者サブ区分 */
+.disabled-sub {
+  display: flex;
+  gap: 6px;
+  padding: 2px 12px 4px;
+}
+.disabled-sub .dsub-btn {
+  flex: 1;
+  padding: 6px 4px;
+  font-size: 13px;
+  background: #16213e;
+  color: #999;
+  border: 1px solid #333;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.disabled-sub .dsub-btn.active {
+  background: #0f3460;
+  color: #4fc3f7;
+  border-color: #4fc3f7;
+  font-weight: bold;
+}
+
 /* セクションラベル */
 .tally-section-label {
   font-size: 13px;
   color: #888;
   padding: 10px 12px 4px;
   font-weight: bold;
+}
+#ptype-indicator {
+  color: #FFD600;
+  font-size: 12px;
 }
 
 /* タリーグリッド */
@@ -455,6 +505,12 @@ html, body {
 }
 .tally-card.has-count .tally-sub {
   color: #999;
+}
+.tally-card.discounted {
+  border-color: #FFD600;
+}
+.tally-card.discounted .tally-label {
+  color: #FFD600;
 }
 
 /* +10円ボタン */

@@ -47,8 +47,19 @@
     <!-- 便タブ -->
     <div id="fare-trip-tabs" class="fare-trip-tabs"></div>
 
+    <!-- 旅客区分トグル -->
+    <div class="ptype-toggle">
+      <button class="ptype-btn active" data-ptype="大人">大人</button>
+      <button class="ptype-btn" data-ptype="小人">小人</button>
+      <button class="ptype-btn" data-ptype="障がい者">障がい者</button>
+    </div>
+    <div id="disabled-sub" class="disabled-sub hidden">
+      <button class="dsub-btn active" data-dsub="大人">大人</button>
+      <button class="dsub-btn" data-dsub="小人">小人</button>
+    </div>
+
     <!-- 現金運賃タリー -->
-    <div class="tally-section-label">現金</div>
+    <div class="tally-section-label">現金<span id="ptype-indicator"></span></div>
     <div id="tally-cash-grid" class="tally-grid"></div>
 
     <!-- 回数券・定期券・無料 -->
