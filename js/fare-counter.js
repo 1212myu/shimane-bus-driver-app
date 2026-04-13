@@ -1,18 +1,19 @@
-// 精算カウンター機能（v3: 運賃計算・旅客区分対応）
+// 計算カウンター機能（v4: 合算払い対応）
 const FareCounter = {
-  FARES: [200, 250, 300, 350, 400, 500, 550],
+  FARES: [100, 150, 200, 250, 300, 350, 400, 500, 550],
   PAYMENT_METHODS: ['現金', '回数券', '定期券', '無料'],
 
   STORAGE_KEY: 'fare_counter_data',
 
   // 状態
-  records: [],       // [{fare, payment, passenger, time, tripKey}]
+  records: [],       // [{fare, payment, passenger, time, tripKey, combine}]
   trips: [],         // [{key, label}]
   activeTripKey: null,
   viewingTripKey: null,
   selectedPayment: '現金',
   selectedPassenger: '大人',       // 大人/小人/障がい者
   disabledSubType: '大人',         // 障がい者のサブ区分: 大人/小人
+  combineMode: false,              // 合算モード（1回の記録で自動解除）
   initialized: false,
 
   // --- 運賃計算 ---
@@ -141,16 +142,35 @@ const FareCounter = {
   // --- 操作 ---
   addRecord(baseFare) {
     const passenger = this.getEffectivePassenger();
-    const fare = this.calcFare(baseFare, passenger);
-    this.records.push({
+    // 合算モード中は計算せず、運賃ボタンの額をそのまま加算金額とする
+    const fare = this.combineMode ? baseFare : this.calcFare(baseFare, passenger);
+    const record = {
       fare,
       baseFare,
       payment: this.selectedPayment,
       passenger,
       time: new Date().toISOString(),
       tripKey: this.viewingTripKey
-    });
+    };
+    if (this.combineMode) {
+      record.combine = true;
+    }
+    this.records.push(record);
+    // 合算モードは1回の記録で自動解除
+    if (this.combineMode) {
+      this.combineMode = false;
+    }
     this.saveData();
+    this.render();
+  },
+
+  toggleCombineMode() {
+    // 定期券・無料では合算は使わない
+    if (this.isCountOnlyMode()) {
+      this.combineMode = false;
+    } else {
+      this.combineMode = !this.combineMode;
+    }
     this.render();
   },
 
@@ -185,16 +205,19 @@ const FareCounter = {
   },
 
   // --- 集計 ---
+  // 人数は combine 記録を除く、金額は全レコード合算
   getSummary(records) {
     const summary = {};
     for (const method of this.PAYMENT_METHODS) {
       summary[method] = { count: 0, amount: 0 };
     }
     for (const r of records) {
-      summary[r.payment].count += 1;
+      if (!r.combine) {
+        summary[r.payment].count += 1;
+      }
       summary[r.payment].amount += r.fare;
     }
-    const totalCount = records.length;
+    const totalCount = records.filter(r => !r.combine).length;
     const totalAmount = records.reduce((s, r) => s + r.fare, 0);
     return { byMethod: summary, totalCount, totalAmount };
   },
@@ -202,6 +225,7 @@ const FareCounter = {
   getPassengerSummary(records) {
     const cats = { '大人': 0, '小人': 0, '障がい者': 0, '定期券': 0, '無料': 0 };
     for (const r of records) {
+      if (r.combine) continue; // 合算は人数に含めない
       if (r.passenger === '大人') cats['大人']++;
       else if (r.passenger === '小人') cats['小人']++;
       else if (r.passenger === '障がい者' || r.passenger === '障がい者(小人)') cats['障がい者']++;
@@ -230,8 +254,13 @@ const FareCounter = {
     document.querySelectorAll('.payment-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         this.selectedPayment = btn.dataset.value;
+        // 定期券・無料に切り替えた場合は合算モードを解除
+        if (this.isCountOnlyMode()) {
+          this.combineMode = false;
+        }
         this.updateToggleButtons('.payment-btn', this.selectedPayment);
         this.updateInputMode();
+        this.render();
       });
     });
 
@@ -252,10 +281,13 @@ const FareCounter = {
       });
     });
 
+    // 合算
+    document.getElementById('btn-fare-combine').addEventListener('click', () => this.toggleCombineMode());
+
     // 取消
     document.getElementById('btn-fare-undo').addEventListener('click', () => this.undoLast());
 
-    // 精算
+    // 計算
     document.getElementById('btn-fare-settle').addEventListener('click', () => this.showSettlement());
 
     // 精算モーダル閉じる
@@ -265,7 +297,7 @@ const FareCounter = {
 
     // データクリア
     document.getElementById('btn-fare-clear').addEventListener('click', () => {
-      if (confirm('本日の精算データをすべて削除しますか？')) {
+      if (confirm('本日の計算データをすべて削除しますか？')) {
         this.records = [];
         this.trips = [];
         this.activeTripKey = null;
@@ -325,22 +357,39 @@ const FareCounter = {
 
     // ヘッダー
     const labelEl = document.getElementById('fare-trip-label');
-    labelEl.textContent = viewTrip ? viewTrip.label : '精算';
+    labelEl.textContent = viewTrip ? viewTrip.label : '計算';
 
-    // 人数
-    document.getElementById('fare-trip-count').textContent = `${viewRecords.length}人`;
+    // 人数（合算記録は除く）
+    const peopleCount = viewRecords.filter(r => !r.combine).length;
+    document.getElementById('fare-trip-count').textContent = `${peopleCount}人`;
 
-    // 直前の入力表示
+    // 直前の入力 or 合算モード表示
     const lastEl = document.getElementById('fare-last-entry');
-    if (viewRecords.length > 0) {
-      const last = viewRecords[viewRecords.length - 1];
-      if (last.fare === 0) {
-        lastEl.textContent = `直前: ${last.passenger}`;
-      } else {
-        lastEl.textContent = `直前: ${last.passenger} ${last.fare}円`;
-      }
+    if (this.combineMode) {
+      lastEl.textContent = '合算入力中';
+      lastEl.classList.add('combine-active');
     } else {
-      lastEl.textContent = '';
+      lastEl.classList.remove('combine-active');
+      if (viewRecords.length > 0) {
+        const last = viewRecords[viewRecords.length - 1];
+        const prefix = last.combine ? '直前(合算): ' : '直前: ';
+        if (last.fare === 0) {
+          lastEl.textContent = `${prefix}${last.passenger}`;
+        } else if (last.combine) {
+          lastEl.textContent = `${prefix}${last.payment} ${last.fare}円`;
+        } else {
+          lastEl.textContent = `${prefix}${last.passenger} ${last.fare}円`;
+        }
+      } else {
+        lastEl.textContent = '';
+      }
+    }
+
+    // 合算ボタンの表示状態
+    const combineBtn = document.getElementById('btn-fare-combine');
+    if (combineBtn) {
+      combineBtn.classList.toggle('active', this.combineMode);
+      combineBtn.disabled = this.isCountOnlyMode();
     }
 
     // 入力モード更新
@@ -368,7 +417,7 @@ const FareCounter = {
     let html = '';
     for (const t of tripsToShow) {
       const isActive = t.key === this.viewingTripKey;
-      const count = this.getRecordsForTrip(t.key).length;
+      const count = this.getRecordsForTrip(t.key).filter(r => !r.combine).length;
       const shortLabel = t.key === 'outside' ? '便外' : t.label.split('発')[0] + '発';
       html += `<button class="fare-trip-tab${isActive ? ' active' : ''}" data-trip-key="${t.key}">
         ${shortLabel}<span class="tab-count">${count}</span>

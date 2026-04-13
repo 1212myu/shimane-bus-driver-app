@@ -536,6 +536,20 @@ html, body {
   border-radius: 8px;
   cursor: pointer;
 }
+.fare-action-btn.combine {
+  background: #333;
+  color: #FFD600;
+  border: 1px solid #FFD600;
+}
+.fare-action-btn.combine.active {
+  background: #FFD600;
+  color: #000;
+  border-color: #FFD600;
+}
+.fare-action-btn.combine:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
 .fare-action-btn.undo {
   background: #333;
   color: #FF1744;
@@ -545,6 +559,15 @@ html, body {
   background: #0f3460;
   color: #4fc3f7;
   border: 1px solid #4fc3f7;
+}
+
+/* 合算モード中のステータス表示 */
+#fare-last-entry.combine-active {
+  color: #000;
+  background: #FFD600;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-weight: bold;
 }
 
 /* 日計サマリー */
