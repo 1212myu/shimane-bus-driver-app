@@ -348,9 +348,9 @@ html, body {
   display: none !important;
 }
 
-/* === 精算カウンター === */
+/* === 計算カウンター === */
 
-/* 便選択画面の精算ボタン */
+/* 便選択画面の計算ボタン */
 .fare-counter-entry {
   padding: 16px;
   text-align: center;
@@ -372,119 +372,115 @@ html, body {
   background: #16213e;
 }
 
-/* ステータスバー */
-.fare-status-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 16px;
-  background: #1a1a2e;
-  border-bottom: 1px solid #333;
-  font-size: 18px;
+/* 現金合計ヒーロー */
+.fare-cash-hero {
+  background: #1a1a0a;
+  border-bottom: 2px solid #FFD600;
+  padding: 12px 16px;
+  text-align: center;
 }
-#fare-trip-count {
-  font-size: 24px;
-  font-weight: bold;
-  color: #4fc3f7;
-}
-#fare-last-entry {
+.fare-cash-hero-label {
   font-size: 14px;
-  color: #999;
-}
-
-/* トグルボタングループ */
-.fare-toggle-group {
-  display: flex;
-  gap: 6px;
-  padding: 8px 12px;
-}
-.fare-toggle-group button {
-  flex: 1;
-  padding: 10px 4px;
-  font-size: 15px;
-  background: #16213e;
-  color: #999;
-  border: 1px solid #333;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-}
-.fare-toggle-group button.active {
-  background: #0f3460;
-  color: #4fc3f7;
-  border-color: #4fc3f7;
+  color: #FFD600;
   font-weight: bold;
 }
-
-/* 障がい者サブ区分 */
-.fare-toggle-sub {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px 8px;
+.fare-cash-hero-amount {
+  font-size: 36px;
+  font-weight: bold;
+  color: #FFD600;
+  font-variant-numeric: tabular-nums;
 }
-.fare-toggle-sub .sub-label {
+
+/* セクションラベル */
+.tally-section-label {
   font-size: 13px;
   color: #888;
-  flex-shrink: 0;
-}
-.fare-toggle-sub button {
-  flex: 1;
-  padding: 6px 4px;
-  font-size: 14px;
-  background: #16213e;
-  color: #999;
-  border: 1px solid #333;
-  border-radius: 6px;
-  cursor: pointer;
-}
-.fare-toggle-sub button.active {
-  background: #0f3460;
-  color: #4fc3f7;
-  border-color: #4fc3f7;
+  padding: 10px 12px 4px;
   font-weight: bold;
 }
 
-/* 運賃ボタングリッド */
-.fare-grid {
+/* タリーグリッド */
+.tally-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  padding: 8px 12px;
+  gap: 6px;
+  padding: 4px 10px;
 }
-.fare-btn {
-  padding: 20px 8px;
-  font-size: 24px;
-  font-weight: bold;
+.tally-grid.tally-other {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* タリーカード */
+.tally-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 4px;
   background: #16213e;
-  color: #e0e0e0;
   border: 2px solid #0f3460;
   border-radius: 10px;
   cursor: pointer;
   transition: background 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 80px;
 }
-.fare-btn:active {
+.tally-card:active {
   background: #1a3a6e;
   border-color: #4fc3f7;
 }
+.tally-card.has-count {
+  border-color: #4fc3f7;
+  background: #0f2a50;
+}
+.tally-label {
+  font-size: 14px;
+  color: #999;
+  margin-bottom: 2px;
+}
+.tally-count {
+  font-size: 32px;
+  font-weight: bold;
+  color: #4fc3f7;
+  line-height: 1;
+}
+.tally-card.has-count .tally-count {
+  color: #fff;
+}
+.tally-sub {
+  font-size: 11px;
+  color: #666;
+  margin-top: 2px;
+  min-height: 14px;
+}
+.tally-card.has-count .tally-sub {
+  color: #999;
+}
 
-/* +1人ボタン（定期券・無料用） */
-.fare-count-area {
+/* +10円ボタン */
+.tally-supplement {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   padding: 8px 12px;
 }
-.btn-fare-count {
-  width: 100%;
-  padding: 28px 8px;
-  font-size: 28px;
+.btn-supplement {
+  padding: 12px 24px;
+  font-size: 18px;
   font-weight: bold;
-  background: #16213e;
-  color: #4fc3f7;
-  border: 2px solid #4fc3f7;
-  border-radius: 10px;
+  background: #333;
+  color: #FFD600;
+  border: 1px solid #FFD600;
+  border-radius: 8px;
   cursor: pointer;
 }
-.btn-fare-count:active {
-  background: #1a3a6e;
+.btn-supplement:active {
+  background: #FFD600;
+  color: #000;
+}
+.supp-display {
+  font-size: 16px;
+  color: #999;
 }
 
 /* 便タブバー */
@@ -536,20 +532,6 @@ html, body {
   border-radius: 8px;
   cursor: pointer;
 }
-.fare-action-btn.combine {
-  background: #333;
-  color: #FFD600;
-  border: 1px solid #FFD600;
-}
-.fare-action-btn.combine.active {
-  background: #FFD600;
-  color: #000;
-  border-color: #FFD600;
-}
-.fare-action-btn.combine:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
 .fare-action-btn.undo {
   background: #333;
   color: #FF1744;
@@ -561,74 +543,12 @@ html, body {
   border: 1px solid #4fc3f7;
 }
 
-/* 合算モード中のステータス表示 */
-#fare-last-entry.combine-active {
-  color: #000;
-  background: #FFD600;
-  padding: 2px 10px;
-  border-radius: 4px;
-  font-weight: bold;
-}
-
-/* 日計サマリー */
-.fare-daily-summary {
-  margin: 8px 12px;
-  background: #111;
-  border-radius: 8px;
-  padding: 12px;
-}
-.fare-summary-title {
+/* 下部エリア */
+.fare-bottom-area {
+  padding: 8px 12px 16px;
   text-align: center;
-  color: #888;
-  font-size: 14px;
-  margin-bottom: 8px;
-}
-.fare-summary-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 16px;
-}
-.fare-summary-table th {
-  color: #888;
-  font-weight: normal;
-  padding: 4px 8px;
-  text-align: left;
-  border-bottom: 1px solid #333;
-}
-.fare-summary-table td {
-  padding: 6px 8px;
-  color: #ccc;
-  border-bottom: 1px solid #1a1a1a;
-}
-.fare-summary-table th:last-child,
-.fare-summary-table td:last-child {
-  text-align: right;
-}
-.fare-summary-table th:nth-child(2),
-.fare-summary-table td:nth-child(2) {
-  text-align: center;
-}
-.fare-trip-header-row td {
-  font-size: 13px;
-  font-weight: bold;
-  color: #888;
-  padding-top: 10px;
-  border-bottom: 1px solid #333;
-}
-.fare-subtotal-row td {
-  font-weight: bold;
-  color: #ccc;
-  font-size: 14px;
-  border-bottom: 2px solid #333;
-}
-.fare-total-row td {
-  font-weight: bold;
-  color: #4fc3f7;
-  border-top: 1px solid #4fc3f7;
 }
 .fare-clear-btn {
-  display: block;
-  margin: 12px auto 0;
   padding: 8px 24px;
   font-size: 13px;
   background: none;

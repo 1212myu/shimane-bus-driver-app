@@ -35,78 +35,43 @@
   <!-- 計算カウンター画面 -->
   <div id="screen-fare" class="screen">
     <header class="header-driving">
-      <span id="fare-trip-label">第1便</span>
+      <span id="fare-trip-label">計算</span>
       <button id="btn-fare-back" class="btn-back">← 戻る</button>
     </header>
 
-    <div class="fare-status-bar">
-      <span id="fare-trip-count">0人</span>
-      <span id="fare-last-entry"></span>
+    <div class="fare-cash-hero">
+      <div class="fare-cash-hero-label">現金合計</div>
+      <div id="fare-cash-total" class="fare-cash-hero-amount">0円</div>
     </div>
 
-    <!-- 便タブ（複数便ある場合に表示） -->
+    <!-- 便タブ -->
     <div id="fare-trip-tabs" class="fare-trip-tabs"></div>
 
-    <!-- 支払方法 -->
-    <div class="fare-toggle-group">
-      <button class="payment-btn active" data-value="現金">現金</button>
-      <button class="payment-btn" data-value="回数券">回数券</button>
-      <button class="payment-btn" data-value="定期券">定期券</button>
-      <button class="payment-btn" data-value="無料">無料</button>
+    <!-- 現金運賃タリー -->
+    <div class="tally-section-label">現金</div>
+    <div id="tally-cash-grid" class="tally-grid"></div>
+
+    <!-- 回数券・定期券・無料 -->
+    <div class="tally-section-label">その他</div>
+    <div id="tally-other-grid" class="tally-grid tally-other"></div>
+
+    <!-- +10円（合算端数用） -->
+    <div class="tally-supplement">
+      <button id="btn-supp-10" class="btn-supplement">+10円</button>
+      <span id="supp-amount" class="supp-display">端数: 0円</span>
     </div>
 
-    <!-- 旅客区分（定期券・無料時は非表示） -->
-    <div id="ptype-group" class="fare-toggle-group">
-      <button class="ptype-btn active" data-value="大人">大人</button>
-      <button class="ptype-btn" data-value="小人">小人</button>
-      <button class="ptype-btn" data-value="障がい者">障がい者</button>
-    </div>
-
-    <!-- 障がい者サブ区分（障がい者選択時のみ表示） -->
-    <div id="disabled-sub-group" class="fare-toggle-sub hidden">
-      <span class="sub-label">障がい者区分:</span>
-      <button class="disabled-sub-btn active" data-value="大人">大人</button>
-      <button class="disabled-sub-btn" data-value="小人">小人</button>
-    </div>
-
-    <!-- 運賃ボタン（現金・回数券時） -->
-    <div id="fare-grid-area" class="fare-grid">
-      <button class="fare-btn" data-fare="100">100</button>
-      <button class="fare-btn" data-fare="150">150</button>
-      <button class="fare-btn" data-fare="200">200</button>
-      <button class="fare-btn" data-fare="250">250</button>
-      <button class="fare-btn" data-fare="300">300</button>
-      <button class="fare-btn" data-fare="350">350</button>
-      <button class="fare-btn" data-fare="400">400</button>
-      <button class="fare-btn" data-fare="500">500</button>
-      <button class="fare-btn" data-fare="550">550</button>
-    </div>
-
-    <!-- +1人ボタン（定期券・無料時） -->
-    <div id="fare-count-area" class="fare-count-area hidden">
-      <button id="btn-fare-count" class="btn-fare-count">＋1人</button>
-    </div>
-
-    <!-- 操作ボタン -->
+    <!-- 操作 -->
     <div class="fare-actions">
-      <button id="btn-fare-combine" class="fare-action-btn combine">合算</button>
       <button id="btn-fare-undo" class="fare-action-btn undo">取消</button>
       <button id="btn-fare-settle" class="fare-action-btn settle">計算</button>
     </div>
 
-    <!-- 日計サマリー -->
-    <div class="fare-daily-summary">
-      <div class="fare-summary-title">本日の集計</div>
-      <table class="fare-summary-table">
-        <thead>
-          <tr><th>支払方法</th><th>人数</th><th>金額</th></tr>
-        </thead>
-        <tbody id="fare-summary-body"></tbody>
-      </table>
+    <div class="fare-bottom-area">
       <button id="btn-fare-clear" class="fare-clear-btn">データクリア</button>
     </div>
 
-    <!-- 運行タブ（運行中に計算画面から戻る用） -->
+    <!-- 運行タブ -->
     <div id="tab-to-driving" class="screen-tab tab-driving hidden" onclick="App.switchToDriving()">運行</div>
 
     <!-- 計算結果モーダル -->
