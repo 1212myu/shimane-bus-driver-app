@@ -1,6 +1,7 @@
 // 計算カウンター機能（v4: 合算払い対応）
 const FareCounter = {
   FARES: [100, 150, 200, 250, 300, 350, 400, 500, 550],
+  FARES_COUPON: [100, 150, 200, 300],
   PAYMENT_METHODS: ['現金', '回数券', '定期券', '無料'],
 
   STORAGE_KEY: 'fare_counter_data',
@@ -237,14 +238,6 @@ const FareCounter = {
 
   // --- イベント ---
   setupEventListeners() {
-    // 運賃ボタン
-    document.querySelectorAll('.fare-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const fare = parseInt(btn.dataset.fare, 10);
-        this.addRecord(fare);
-      });
-    });
-
     // +1人ボタン（定期券・無料用）
     document.getElementById('btn-fare-count').addEventListener('click', () => {
       this.addCountRecord();
@@ -334,7 +327,21 @@ const FareCounter = {
     document.getElementById('disabled-sub-group').classList.toggle('hidden', true);
     if (!isCountOnly) {
       this.updateDisabledSubVisibility();
+      this.renderFareGrid();
     }
+  },
+
+  renderFareGrid() {
+    const container = document.getElementById('fare-grid-area');
+    const fares = this.selectedPayment === '回数券' ? this.FARES_COUPON : this.FARES;
+    container.innerHTML = fares.map(f =>
+      `<button class="fare-btn" data-fare="${f}">${f}</button>`
+    ).join('');
+    container.querySelectorAll('.fare-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.addRecord(parseInt(btn.dataset.fare, 10));
+      });
+    });
   },
 
   // 障がい者サブ区分の表示切替
