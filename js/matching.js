@@ -6,12 +6,41 @@ const Matching = {
   prevLat: null,
   prevLon: null,
 
+  startDetected: false,
+
   reset(trip) {
     this.currentTrip = trip;
     this.passedStopIndex = -1;
     this.passedStops = [];
     this.prevLat = null;
     this.prevLon = null;
+    this.startDetected = false;
+  },
+
+  // 途中始動対応: 初回GPS取得時に最寄りのバス停を検出し、
+  // それ以前のバス停を通過済みにする
+  detectStartPosition(lat, lon) {
+    if (this.startDetected) return;
+    this.startDetected = true;
+
+    const stops = this.currentTrip.stop_times;
+    let minDist = Infinity;
+    let nearestIdx = 0;
+
+    for (let i = 0; i < stops.length; i++) {
+      const stopData = GTFS.getStop(stops[i].stop_id);
+      if (!stopData) continue;
+      const dist = this.haversine(lat, lon, stopData.lat, stopData.lon);
+      if (dist < minDist) {
+        minDist = dist;
+        nearestIdx = i;
+      }
+    }
+
+    // 最寄りバス停の手前まで通過済みにする（最寄り自体は未通過）
+    if (nearestIdx > 0) {
+      this.passedStopIndex = nearestIdx - 1;
+    }
   },
 
   // Haversine距離計算（メートル）
@@ -50,6 +79,9 @@ const Matching = {
   // GPS位置から進行状況を更新
   updateProgress(lat, lon, accuracy) {
     if (!this.currentTrip) return null;
+
+    // 初回GPS取得時に途中始動を検出
+    this.detectStartPosition(lat, lon);
 
     // D) GPS精度100mより悪い場合は通過判定しない
     if (accuracy > 100) {
